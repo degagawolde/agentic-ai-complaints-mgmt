@@ -1,0 +1,96 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: complaints
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r services/api/src/requirements.txt
+          pip install -r services/ai-orchestration/src/requirements.txt
+
+      - name: Run API tests
+        run: |
+          cd services/api
+          pytest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Install Web dependencies
+        run: |
+          cd services/web
+          npm install
+      - name: Run Web Tests
+        run: |
+          cd services/web
+          npm test
+
+      - name: Build Docker Images
+        run: |
+          docker build -t myorg/api:latest ./services/api
+          docker build -t myorg/ai-orchestration:latest ./services/ai-orchestration
+          docker build -t myorg/worker:latest ./services/worker
+          docker build -t myorg/web:latest ./services/web
+
+      - name: Push Docker Images
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: |
+            myorg/api:latest
+            myorg/ai-orchestration:latest
+            myorg/worker:latest
+            myorg/web:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Deploy to K8s
+        run: |
+          kubectl set image deployment/api api=myorg/api:latest -n prod
+          kubectl set image deployment/ai-orchestration ai-orchestration=myorg/ai-orchestration:latest -n prod
+          kubectl set image deployment/worker worker=myorg/worker:latest -n prod
+          kubectl set image deployment/web web=myorg/web:latest -n prod
+          kubectl rollout status deployment/api -n prod
+          kubectl rollout status deployment/ai-orchestration -n prod
+          kubectl rollout status deployment/worker -n prod
+          kubectl rollout status deployment/web -n prod
