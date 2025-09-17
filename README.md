@@ -1,21 +1,33 @@
-# Project blueprint — folder structure + step-by-step implementation plan
+# Compliant Management System
 
-1. a **recommended monorepo folder structure** (tree + file descriptions)
-2. **phase-by-phase implementation steps** (what to build in what order)
-3. **key code snippets / config examples** you can paste and adapt (LangChain, LangGraph, SQL, vector indexing, notification hooks, prompt templates)
-4. **testing / deployment / operational** checklist.
+## 1. Problem Statement & Objectives
 
----
+Customers submit complaints through a structured web form. The system must triage, validate, route, resolve, and close complaints automatically or with human-in-the-loop, ensuring correctness, compliance, traceability, and continuous learning..
 
-# 1) System Workflow
+**Primary objectives**
+
+* Accurately detect complaint relevance and required action (auto-resolve, human department, reject, ask for clarification).
+* Validate human/department resolutions before they reach the customer using LLM + grounded company policy.
+* Maintain auditability, SLAs, and feedback loops for model improvement.
+* Stores complaints, resolutions, and communication logs in  **PostgreSQL/MySQL** .
+* Reads from SQL when AI needs customer details, complaint history, or SLA deadlines.
+* Sends **email and SMS notifications** with full logging in SQL.
+
+**Success metrics**
+
+* Accuracy of relevance classification (targetizable).
+* % of resolutions accepted by LLM validation vs sent back for revision.
+* Time-to-first-response (automated).
+* Customer satisfaction (CSAT) post-resolution.
+* False positive/negative rate for “not relevant”.
+
+1) System Workflow
 
 [https://docs.google.com/document/d/1nQyeVWMEB1pnbBIjaki79zXkIS-LfP8-9a3uolLrRN4/edit?usp=sharing](https://docs.google.com/document/d/1nQyeVWMEB1pnbBIjaki79zXkIS-LfP8-9a3uolLrRN4/edit?usp=sharing "Documentation")
 
 A. Old System Workflow
 
 ![Alt text](docs/complaint_management_system_colorful.png "Complaint Management System")
-
-
 
 B. Agentic AI -- System Workflow
 
