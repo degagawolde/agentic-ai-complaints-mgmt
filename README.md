@@ -48,7 +48,7 @@ Customers submit complaints through a structured web form. The system must triag
    * Final complaint status updated in SQL (`closed`).
    * Communication & resolution history archived.
 
-## **3. Algorithmic Methodology**
+## **3. System Architecture**
 
 ### **AI Layer**
 
