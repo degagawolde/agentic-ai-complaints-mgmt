@@ -1,5 +1,10 @@
 # Compliant Management System
 
+
+## Documentation
+
+[docs/Agentic AI for Complaint Management.pdf](docs/Agentic AI for Complaint Management.pdf)
+
 ## 1. Problem Statement & Objectives
 
 Customers submit complaints through a structured web form. The system must triage, validate, route, resolve, and close complaints automatically or with human-in-the-loop, ensuring correctness, compliance, traceability, and continuous learning..
@@ -117,19 +122,3 @@ Customers submit complaints through a structured web form. The system must triag
 * **Frontend** : React/Next.js portal for customers & departments.
 * **Security** : JWT auth, RBAC, encryption of sensitive info.
 * **Deployment** : Docker, Kubernetes for scaling.
-
-1) System Workflow
-
-[https://docs.google.com/document/d/1nQyeVWMEB1pnbBIjaki79zXkIS-LfP8-9a3uolLrRN4/edit?usp=sharing](https://docs.google.com/document/d/1nQyeVWMEB1pnbBIjaki79zXkIS-LfP8-9a3uolLrRN4/edit?usp=sharing "Documentation")
-
-A. Old System Workflow
-
-![Alt text](docs/complaint_management_system_colorful.png "Complaint Management System")
-
-B. Agentic AI -- System Workflow
-
-![Alt text](docs/ai_complaint_management_system_colorful.png "Agentic AI -- System Workflow")
-
-C. Data base design
-
-![Alt text](docs/complaint_system_db.png "DB Design")
