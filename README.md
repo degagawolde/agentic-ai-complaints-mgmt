@@ -1,6 +1,6 @@
 # Compliant Management System
 
-[![Preview](docs/complaint-preview.png)](docs/Agentic%20AI%20for%20Complaint%20Management.pdf)
+[Agentic AI for Complaint Management (PDF)](docs/Agentic%20AI%20for%20Complaint%20Management.pdf)
 
 ## 1. Problem Statement & Objectives
 
