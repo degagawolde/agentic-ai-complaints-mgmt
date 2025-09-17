@@ -29,11 +29,12 @@ Customers submit complaints through a structured web form. The system must triag
    * Complaint stored in  **SQL DB** .
    * Indexed in **Vector DB** if needed for semantic search.
 2. **AI Initial Review**
-   * AI pulls complaint data from SQL.
-   * Uses RAG for relevance classification & completeness.
-   * Retrieve policies, procedures, product catalogs, service scope, FAQs, SLA rules, prior successful resolutions from **Knowledge base**, ask LLM to decide relevance and produce a relevance score and explanation.
+   * AI **pulls** complaint data from SQL.
+   * Uses **RAG** for relevance classification & completeness.
+   * **Retrieve** policies, procedures, SLA rules, prior successful resolutions from **Knowledge base**
+   * **Ask** LLM to decide relevance and produce a relevance score and explanation.
    * **Output**: relevance decision + score + suggested category/department + confidence.
-   * Updates SQL with complaint status (`pending`, `auto_resolved`, `forwarded`).
+   * **Updates** SQL with complaint status (`pending`, `auto_resolved`, `forwarded`).
 3. **AI Decision**
    * **Not relevant** → AI generates response, logs to SQL, sends via email/SMS.
    * **Auto-resolve** → AI generates resolution, saves in SQL, sends via email/SMS.
@@ -58,7 +59,6 @@ Customers submit complaints through a structured web form. The system must triag
 * **LLM + SQL Agent + RAG**
   * **SQL Agent** : Converts natural language into SQL queries (e.g.,  *“fetch complaint history for customer X”* ).
   * **RAG** : Retrieves policy documents, FAQs, and legal texts.
-  * **Combined** : Ensures consistency in decision-making.
 
 ### **Data Handling**
 
@@ -69,11 +69,10 @@ Customers submit complaints through a structured web form. The system must triag
 
 * **Vector DB Options** : Pinecone, Milvus, Weaviate, or PostgreSQL + pgvector.
 * **Content Stored** : Policy documents, SLA rules, product catalog, prior resolved cases, templates.
-* **Retrieval & Context Builder** :
-* Retriever (semantic + keyword hybrid).
-* Top-k document selection.
-* Relevance filters.
-* **LLM Orchestration & Prompting Layer** :
+* **Retrieval & Context Builder** : Retriever (semantic + keyword hybrid)
+
+### **LLM Orchestration & Prompting Layer** :
+
 * Relevance checking.
 * Resolution generation.
 * Resolution validation.
@@ -99,18 +98,7 @@ Customers submit complaints through a structured web form. The system must triag
 * **SMS** : Twilio / AWS SNS.
 * **Logging** : All notifications stored in SQL with delivery status.
 
-## **4. Feature Set & Technical Requirements**
-
-### **Core Features**
-
-1. Complaint submission & storage (SQL).
-2. AI initial review (SQL + RAG).
-3. Department assignment & workflow (SQL-driven).
-4. AI validation of resolution (SQL + RAG).
-5. Multi-channel communication (email + SMS), with SQL logging.
-6. Feedback loop & audit trail.
-
-### **Technical Requirements**
+## **4. Technical Requirements**
 
 * **Backend** : Django/FastAPI (Python) → ORM for SQL, LangChain for AI agents.
 * **Database** : PostgreSQL / MySQL.
