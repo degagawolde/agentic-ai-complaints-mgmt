@@ -31,7 +31,8 @@ Customers submit complaints through a structured web form. The system must triag
 2. **AI Initial Review**
    * AI pulls complaint data from SQL.
    * Uses RAG for relevance classification & completeness.
-   * Retrieve policy/docs, ask LLM to decide relevance and produce a relevance score and explanation. Output: relevance decision + score + suggested category/department + confidence.
+   * Retrieve policies, procedures, product catalogs, service scope, FAQs, SLA rules, prior successful resolutions from **Knowledge base**, ask LLM to decide relevance and produce a relevance score and explanation.
+   * **Output**: relevance decision + score + suggested category/department + confidence.
    * Updates SQL with complaint status (`pending`, `auto_resolved`, `forwarded`).
 3. **AI Decision**
    * **Not relevant** → AI generates response, logs to SQL, sends via email/SMS.

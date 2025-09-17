@@ -34,3 +34,30 @@ Output (JSON):
  "short_feedback": "..."
 }
 ```
+
+
+```
+You are an AI resolution validator.  
+Input:  
+- Complaint: {complaint_text}  
+- Department Resolution: {resolution_text}  
+- Company Policies: {retrieved_policies}  
+
+Task:  
+1. Check if the resolution addresses all issues raised in the complaint.  
+2. Verify that the resolution complies with company policies.  
+3. Identify any missing, incorrect, or unclear parts.  
+4. Output: Validation status (Valid / Invalid / Needs Review) + short explanation.
+```
+
+
+*Prompt Example:*
+
+```
+You are an AI complaint filter. Given the complaint and company scope,
+decide if the complaint is relevant.
+
+Complaint: "My iPhone won’t charge."
+Scope: "We provide mobile data and SIM card services. We do not handle device repairs."
+Is the complaint relevant? Answer with Yes/No and explain.
+```
