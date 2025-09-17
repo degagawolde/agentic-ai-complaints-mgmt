@@ -11,6 +11,16 @@ Task: Decide whether this complaint is within company scope.
 Output (JSON): {"decision":"Yes|No|Uncertain","score":0.0-1.0,"category":"billing|network|product|...","explanation":"1-2 sentences"}
 ```
 
+```
+You are an AI complaint filter. Given the complaint and company scope,
+decide if the complaint is relevant.
+
+Complaint: "My iPhone won’t charge."
+Scope: "We provide mobile data and SIM card services. We do not handle device repairs."
+Is the complaint relevant? Answer with Yes/No and explain.
+```
+
+
 ### Resolution validation prompt (skeleton)
 
 ```
@@ -48,16 +58,4 @@ Task:
 2. Verify that the resolution complies with company policies.  
 3. Identify any missing, incorrect, or unclear parts.  
 4. Output: Validation status (Valid / Invalid / Needs Review) + short explanation.
-```
-
-
-*Prompt Example:*
-
-```
-You are an AI complaint filter. Given the complaint and company scope,
-decide if the complaint is relevant.
-
-Complaint: "My iPhone won’t charge."
-Scope: "We provide mobile data and SIM card services. We do not handle device repairs."
-Is the complaint relevant? Answer with Yes/No and explain.
 ```
