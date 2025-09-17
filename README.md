@@ -9,7 +9,7 @@
 
 # 1) System Workflow
 
-
+[https://docs.google.com/document/d/1nQyeVWMEB1pnbBIjaki79zXkIS-LfP8-9a3uolLrRN4/edit?usp=sharing](https://docs.google.com/document/d/1nQyeVWMEB1pnbBIjaki79zXkIS-LfP8-9a3uolLrRN4/edit?usp=sharing "Documentation")
 
 A. Old System Workflow
 
@@ -23,7 +23,7 @@ B. Agentic AI -- System Workflow
 
 C. Data base design
 
-![Alt text](./path/to/image.png)
+![Alt text](docs/complaint_system_db.png "DB Design")
 
 ---
 
