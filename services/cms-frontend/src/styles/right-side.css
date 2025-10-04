@@ -1,0 +1,108 @@
+.right-side {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: #F9F9F9;
+    /* overflow: hidden; */
+}
+
+div .head {
+    display: flex;
+    background-color: #ffffff;
+    color: white;
+    border-bottom: 1px solid #D6D6D6;
+    padding: 0.8vw;
+    padding-inline: 1.5vw;
+    color: #0A1D39;
+}
+
+.head .heading {
+    flex-grow: 1;
+    border-left: .4vw solid #E90102;
+    
+}
+.dropdown-menu button {
+    color: black;
+    border: none;
+    padding: 0.8vw 2vw;
+    font-size: 0.9vw;
+    cursor: pointer;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dropdown-menu button:hover {
+    background-color: #d8d2d3; /* Darker red on hover */
+  }
+  
+
+.head .heading p {
+    padding-left: .6vw;
+    margin: 0;
+}
+
+
+.head .heading p:first-child {
+    font-weight: 700;
+    font-size: 1vw;
+}
+
+.head .heading p:last-child {
+    color: #E90102;
+    font-size: .9vw;
+    font-weight: 400;
+}
+
+.user-icon {
+    width: 3.4vw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.head-icons {
+    display: flex;
+}
+
+.head-icons .icons {
+    height: 1.2vw;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: #ffffff;
+}
+
+.head .user-detail .arrow-icon {
+    height: fit-content;
+    margin-block: auto;
+}
+
+.head .user-detail {
+    display: flex;
+    font-size: 1vw;
+    font-weight: 600;
+    line-height: normal;
+    gap: .8rem;
+}
+.head .user-detail p {
+    margin: 0;
+}
+
+.head .user-detail .user-name-pos {
+
+    font-size: .9vw;
+    margin: none;
+}
+
+.head .user-pos {
+    width: fit-content;
+    font-size: 0.7vw;
+    margin-left: auto;
+    color: #432101;
+    font-weight: 400;
+    margin-block: 0;
+}
+
+.head .vertical {
+    border: 1px solid #ffffff;
+    margin-inline: 3vw;
+}
