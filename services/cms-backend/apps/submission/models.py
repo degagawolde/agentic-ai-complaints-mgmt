@@ -48,7 +48,7 @@ class Complaint(models.Model):
     actions_already_taken = models.TextField(blank=True, null=True)
 
     # --- Desired Outcome ---
-    desired_outcome = models.CharField(max_length=255, blank=True, null=True)
+    desired_outcome = models.TextField(max_length=255, blank=True, null=True)
 
     # --- Complaint Handling ---
     complaint_channel = models.CharField(

@@ -31,6 +31,7 @@ EXPOSE 8000
 
 # At the end of the Dockerfile
 # RUN python manage.py collectstatic --noinput
+# RUN mkdir -p /app/static /app/staticfiles
 
 # Run Django application
 CMD ["bash", "-c", "python manage.py makemigrations && python manage.py migrate && gunicorn cms_api.wsgi:application"]
