@@ -1,84 +1,95 @@
+import uuid
 from django.db import models
 from django.utils import timezone
+from apps.customer.models import Customer
 
-# Create your models here.
 
+class ComplaintStatus(models.TextChoices):
+    RECEIVED = "RECEIVED", "Received"
+    IN_PROGRESS = "IN_PROGRESS", "In Progress"
+    RESOLVED = "RESOLVED", "Resolved"
+    REJECTED = "REJECTED", "Rejected"
+    DRAFT = "draft", "Draft"
+    VALIDATED = "validated", "Validated"
+    DELIVERED = "delivered", "Delivered"
+
+class ChannelChoices(models.TextChoices):
+    EMAIL = "email", "Email"
+    SMS =   "sms", "SMS"
+    PHONE = "PHONE", "Phone"
+    IN_PERSON = "IN_PERSON", "In Person"
+    WEB = "WEB", "Website"
+    SOCIAL_MEDIA = "SOCIAL_MEDIA", "Social Media"
+
+class StatusChoices(models.TextChoices):
+    PENDING = "pending", "Pending"
+    SENT = "sent", "Sent"
+    FAILED = "failed", "Failed"
 
 class Complaint(models.Model):
-    STATUS_CHOICES = [
-        ("submitted", "Submitted"),
-        ("under_review", "Under Review"),
-        ("resolved", "Resolved"),
-        ("closed", "Closed"),
-    ]
-    PRIORITY_CHOICES = [
-        ("low", "Low"),
-        ("normal", "Normal"),
-        ("high", "High"),
-        ("critical", "Critical"),
-    ]
+    uu_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    # --- Customer Information ---
     customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, related_name="complaints"
+        Customer, on_delete=models.CASCADE, related_name="customer_submission"
     )
-    subject = models.CharField(max_length=200)
+    # --- Complaint Details ---
+    date_of_incident = models.DateField(blank=True, null=True)
+    product_or_service = models.CharField(max_length=255)
+    order_or_invoice_number = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField()
-    category = models.CharField(
-        max_length=100, blank=True, null=True
-    )  # e.g., Billing, Service, Product
-    status = models.CharField(
-        max_length=50, choices=STATUS_CHOICES, default="submitted"
+    supporting_documents = models.FileField(
+        upload_to="complaints/supporting_docs/", blank=True, null=True
     )
-    priority = models.CharField(
-        max_length=20, choices=PRIORITY_CHOICES, default="normal"
+
+    # --- Context ---
+    location = models.CharField(max_length=255, blank=True, null=True)
+    staff_involved = models.CharField(max_length=255, blank=True, null=True)
+    actions_already_taken = models.TextField(blank=True, null=True)
+
+    # --- Desired Outcome ---
+    desired_outcome = models.CharField(max_length=255, blank=True, null=True)
+
+    # --- Complaint Handling ---
+    complaint_channel = models.CharField(
+        max_length=50, choices=ChannelChoices.choices, default=ChannelChoices.WEB
+       
     )
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+    complaint_status = models.CharField(
+        max_length=20, choices=ComplaintStatus.choices, default=ComplaintStatus.RECEIVED
+    )
+    reference_number = models.CharField(max_length=50, unique=True, blank=True)
+    date_received = models.DateTimeField(default=timezone.now)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-date_received"]
+        verbose_name = "Customer Complaint"
+        verbose_name_plural = "Customer Complaints"
+
+    def save(self, *args, **kwargs):
+        # Auto-generate reference number if not set
+        if not self.reference_number:
+            self.reference_number = f"CMP-{timezone.now().strftime('%Y%m%d')}-{str(uuid.uuid4())[:8].upper()}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Complaint {self.id} - {self.subject}"
+        return f"{self.reference_number} - {self.customer.full_name}"
 
 
 class Resolution(models.Model):
-    STATUS_CHOICES = [
-        ("draft", "Draft"),
-        ("validated", "Validated"),
-        ("delivered", "Delivered"),
-    ]
-
+    uu_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     complaint = models.ForeignKey(
         Complaint, on_delete=models.CASCADE, related_name="resolutions"
     )
     resolution_text = models.TextField()
     resolved_by = models.CharField(max_length=100)  # AI, Department, Hybrid
     validated_by_ai = models.BooleanField(default=False)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="draft")
+    solution_status = models.CharField(
+        max_length=20, choices=ComplaintStatus.choices, default=ComplaintStatus.RECEIVED
+    )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Resolution {self.id} for Complaint {self.complaint_id}"
-
-
-class Communication(models.Model):
-    CHANNEL_CHOICES = [
-        ("email", "Email"),
-        ("sms", "SMS"),
-    ]
-    STATUS_CHOICES = [
-        ("pending", "Pending"),
-        ("sent", "Sent"),
-        ("failed", "Failed"),
-    ]
-
-    complaint = models.ForeignKey(
-        Complaint, on_delete=models.CASCADE, related_name="communications"
-    )
-    channel = models.CharField(max_length=50, choices=CHANNEL_CHOICES)
-    message = models.TextField()
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending")
-    sent_at = models.DateTimeField(blank=True, null=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"{self.channel.upper()} for Complaint {self.complaint_id}"
+        return f"Resolution {self.uu_id} for Complaint {self.created_at}"
