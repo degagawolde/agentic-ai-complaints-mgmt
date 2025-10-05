@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 const ComplaintForm = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ const ComplaintForm = () => {
     desired_outcome: "",
     file: null,
   });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "" }); // type: "success" | "error"
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -21,11 +24,68 @@ const ComplaintForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Complaint submitted successfully!");
-  };
+    setLoading(true);
+    setMessage({ text: "", type: "" });
 
+    try {
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null && value !== "") data.append(key, value);
+      });
+
+      const response = await axios.post(
+        "http://localhost:8000/cms/complaint/submissions/",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // ✅ Verify if submission is successful
+      if (response.status === 201 || response.status === 200) {
+        setMessage({
+          text: "✅ Complaint submitted successfully!",
+          type: "success",
+        });
+
+        // Reset form
+        setFormData({
+          product_or_service: "",
+          date_of_incident: "",
+          order_or_invoice_number: "",
+          description: "",
+          actions_already_taken: "",
+          location: "",
+          staff_involved: "",
+          desired_outcome: "",
+          file: null,
+        });
+      } else {
+        setMessage({
+          text: "⚠️ Unexpected response from the server.",
+          type: "error",
+        });
+      }
+
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error submitting complaint:", error);
+      setMessage({
+        text:
+          error.response?.data?.detail ||
+          "❌ Failed to submit complaint. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+      // Automatically hide message after 5 seconds
+      setTimeout(() => setMessage({ text: "", type: "" }), 5000);
+    }
+  };
   const inputStyle = {
     width: "100%",
     border: "1.5px solid #ccc",
@@ -59,7 +119,8 @@ const ComplaintForm = () => {
         Submit a Complaint
       </h2>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.8rem" }}>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.8rem" }}>
         {/* Row 1 */}
         <div style={{ display: "flex", gap: "1.5rem" }}>
           <div style={{ flex: 1 }}>
@@ -191,28 +252,45 @@ const ComplaintForm = () => {
           <input type="file" name="file" onChange={handleChange} style={{ width: "100%" }} />
         </div>
 
+        {/* ✅ Message Banner */}
+        {message.text && (
+          <div
+            className={`mb-6 text-center p-3 rounded-lg font-medium ${message.type === "success"
+              ? "bg-green-100 text-green-800 border border-green-400"
+              : "bg-red-100 text-red-800 border border-red-400"
+              }`}
+          >
+            {message.text}
+          </div>
+        )}
+
         {/* Submit Button */}
-        <div style={{ textAlign: "center", marginTop: "1rem" }}>
+        <div className="flex justify-center">
           <button
-            type="submit"
+            onClick={handleSubmit}
+            disabled={loading}
             style={{
-              width: "200px",
-              backgroundColor: "#16a34a",
+              backgroundColor: loading ? "#9ca3af" : "#16a34a",
               color: "white",
-              padding: "10px 16px",
+              padding: "10px 40px",
               borderRadius: "8px",
-              cursor: "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
+              fontWeight: "600",
               fontSize: "16px",
               transition: "background-color 0.3s ease",
-              border: "none",
+              marginTop: "1rem",
             }}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = "#1d4ed8")}
-            onMouseLeave={(e) => (e.target.style.backgroundColor = "#16a34a")}
+            onMouseEnter={(e) =>
+              !loading && (e.target.style.backgroundColor = "#1d4ed8")
+            }
+            onMouseLeave={(e) =>
+              !loading && (e.target.style.backgroundColor = "#16a34a")
+            }
           >
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 };

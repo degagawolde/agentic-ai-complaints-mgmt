@@ -52,6 +52,7 @@ class Complaint(models.Model):
 
     # --- Complaint Handling ---
     complaint_channel = models.CharField(
+        null=True,
         max_length=50, choices=ChannelChoices.choices, default=ChannelChoices.WEB
        
     )
