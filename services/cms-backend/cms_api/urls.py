@@ -22,4 +22,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("cms/", include("apps.submission.urls")),
+    path('auth/', include('user_management.urls')),  # all routes under /auth/
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
