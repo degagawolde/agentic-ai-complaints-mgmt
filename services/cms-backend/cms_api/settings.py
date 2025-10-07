@@ -82,12 +82,10 @@ TEMPLATES = [
 
 # added for the performance optimizations
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
-    "DEFAULT_PARSER_CLASSES": [
-        "rest_framework.parsers.MultiPartParser",  # Required for files
-        "rest_framework.parsers.JSONParser",
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
 import ComplaintForm from "./pages/ComplaintForm";
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
               }
             />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/complaint" element={<ComplaintForm />} />
           </Routes>
         </main>

@@ -1,8 +1,7 @@
 import uuid
 from django.db import models
 from django.utils import timezone
-from apps.customer.models import Customer
-
+from django.contrib.auth.models import User
 
 class ComplaintStatus(models.TextChoices):
     RECEIVED = "RECEIVED", "Received"
@@ -30,9 +29,8 @@ class Complaint(models.Model):
     uu_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # --- Customer Information ---
-    customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, related_name="customer_submission"
-    )
+    # --- User Information ---
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="complaints")
     # --- Complaint Details ---
     date_of_incident = models.DateField(blank=True, null=True)
     product_or_service = models.CharField(max_length=255)

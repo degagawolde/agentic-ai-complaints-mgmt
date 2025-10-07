@@ -9,9 +9,12 @@ class ResolutionSerializer(serializers.ModelSerializer):
 
 
 class ComplaintSerializer(serializers.ModelSerializer):
-    resolutions = ResolutionSerializer(many=True, read_only=True)
-
     class Meta:
         model = Complaint
         fields = "__all__"
-        read_only_fields = ("reference_number", "date_received", "last_updated")
+        read_only_fields = ["reference_number", "date_received", "last_updated", "user"]
+
+    def create(self, validated_data):
+        # Automatically set the user to the logged-in user
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+import { submitComplaint } from "../api";
+import "../styles/ComplaintForm.css";
 
 const ComplaintForm = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const ComplaintForm = () => {
     file: null,
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: "", type: "" }); // type: "success" | "error"
+  const [message, setMessage] = useState({ text: "", type: "" });
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -27,53 +28,26 @@ const ComplaintForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage({ text: "", type: "" });
-
     try {
       const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null && value !== "") data.append(key, value);
+      Object.keys(formData).forEach((key) => {
+        data.append(key, formData[key]);
       });
 
-      const response = await axios.post(
-        "http://localhost:8000/cms/complaint/submissions/",
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      // ✅ Verify if submission is successful
-      if (response.status === 201 || response.status === 200) {
-        setMessage({
-          text: "✅ Complaint submitted successfully!",
-          type: "success",
-        });
-
-        // Reset form
-        setFormData({
-          product_or_service: "",
-          date_of_incident: "",
-          order_or_invoice_number: "",
-          description: "",
-          actions_already_taken: "",
-          location: "",
-          staff_involved: "",
-          desired_outcome: "",
-          file: null,
-        });
-      } else {
-        setMessage({
-          text: "⚠️ Unexpected response from the server.",
-          type: "error",
-        });
-      }
-
-      console.log("Response:", response.data);
+      await submitComplaint(data);
+      setMessage({ text: "Complaint submitted successfully!", type: "success" });
+      setFormData({
+        product_or_service: "",
+        date_of_incident: "",
+        order_or_invoice_number: "",
+        description: "",
+        actions_already_taken: "",
+        location: "",
+        staff_involved: "",
+        desired_outcome: "",
+        file: null,
+      });
     } catch (error) {
-      console.error("Error submitting complaint:", error);
       setMessage({
         text:
           error.response?.data?.detail ||
@@ -82,127 +56,88 @@ const ComplaintForm = () => {
       });
     } finally {
       setLoading(false);
-      // Automatically hide message after 5 seconds
       setTimeout(() => setMessage({ text: "", type: "" }), 5000);
     }
   };
-  const inputStyle = {
-    width: "100%",
-    border: "1.5px solid #ccc",
-    padding: "10px",
-    borderRadius: "6px",
-    outline: "none",
-    transition: "border-color 0.2s ease",
-    fontSize: "14px",
-  };
 
   return (
-    <div
-      style={{
-        padding: "2rem",
-        maxWidth: "900px",
-        margin: "3rem auto",
-        backgroundColor: "#fff",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        borderRadius: "12px",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: "1.8rem",
-          fontWeight: "bold",
-          marginBottom: "1.5rem",
-          textAlign: "center",
-          color: "#1f2937",
-        }}
-      >
-        Submit a Complaint
-      </h2>
+    <div className="complaint-card">
+      <h2>Submit a Complaint</h2>
 
+      {message.text && (
+        <div className={message.type === "success" ? "message-success" : "message-error"}>
+          {message.text}
+        </div>
+      )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.8rem" }}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         {/* Row 1 */}
-        <div style={{ display: "flex", gap: "1.5rem" }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Product/Service</label>
+        <div className="row">
+          <div className="input-group">
+            <label>Product/Service</label>
             <input
               type="text"
               name="product_or_service"
               value={formData.product_or_service}
               onChange={handleChange}
-              placeholder="Enter product or service"
               required
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
+              placeholder="Enter product or service"
             />
           </div>
 
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Incident Date</label>
+          <div className="input-group">
+            <label>Incident Date</label>
             <input
               type="date"
               name="date_of_incident"
               value={formData.date_of_incident}
               onChange={handleChange}
               required
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
 
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Order/Invoice Number</label>
+          <div className="input-group">
+            <label>Order/Invoice Number</label>
             <input
               type="text"
               name="order_or_invoice_number"
               value={formData.order_or_invoice_number}
               onChange={handleChange}
               placeholder="Optional"
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
         </div>
 
         {/* Row 2 */}
-        <div style={{ display: "flex", gap: "1.5rem" }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Description</label>
+        <div className="row">
+          <div className="input-group">
+            <label>Description</label>
             <textarea
               name="description"
-              rows="4"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Describe your issue in detail..."
+              rows="4"
+              placeholder="Describe your issue..."
               required
-              style={{ ...inputStyle, resize: "none" }}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
 
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Previous Actions Taken</label>
+          <div className="input-group">
+            <label>Previous Actions Taken</label>
             <textarea
               name="actions_already_taken"
-              rows="4"
               value={formData.actions_already_taken}
               onChange={handleChange}
+              rows="4"
               placeholder="Mention any steps already taken..."
-              style={{ ...inputStyle, resize: "none" }}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
         </div>
 
         {/* Row 3 */}
-        <div style={{ display: "flex", gap: "1.5rem" }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Location</label>
+        <div className="row">
+          <div className="input-group">
+            <label>Location</label>
             <input
               type="text"
               name="location"
@@ -210,28 +145,22 @@ const ComplaintForm = () => {
               onChange={handleChange}
               placeholder="Enter location"
               required
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
 
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Staff Involved</label>
+          <div className="input-group">
+            <label>Staff Involved</label>
             <input
               type="text"
               name="staff_involved"
               value={formData.staff_involved}
               onChange={handleChange}
               placeholder="Names if any"
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
 
-          <div style={{ flex: 1 }}>
-            <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Desired Outcome</label>
+          <div className="input-group">
+            <label>Desired Outcome</label>
             <input
               type="text"
               name="desired_outcome"
@@ -239,58 +168,23 @@ const ComplaintForm = () => {
               onChange={handleChange}
               placeholder="What resolution do you expect?"
               required
-              style={inputStyle}
-              onFocus={(e) => (e.target.style.borderColor = "#3b82f6")}
-              onBlur={(e) => (e.target.style.borderColor = "#ccc")}
             />
           </div>
         </div>
 
-        {/* Row 4 */}
-        <div>
-          <label style={{ display: "block", marginBottom: "6px", fontWeight: 500 }}>Upload Evidence/File</label>
-          <input type="file" name="file" onChange={handleChange} style={{ width: "100%" }} />
+        {/* File input */}
+        <div className="input-group file-input">
+          <label>Upload Evidence/File</label>
+          <input type="file" name="file" onChange={handleChange} />
         </div>
 
-        {/* ✅ Message Banner */}
-        {message.text && (
-          <div
-            className={`mb-6 text-center p-3 rounded-lg font-medium ${message.type === "success"
-              ? "bg-green-100 text-green-800 border border-green-400"
-              : "bg-red-100 text-red-800 border border-red-400"
-              }`}
-          >
-            {message.text}
-          </div>
-        )}
-
-        {/* Submit Button */}
-        <div className="flex justify-center">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{
-              backgroundColor: loading ? "#9ca3af" : "#16a34a",
-              color: "white",
-              padding: "10px 40px",
-              borderRadius: "8px",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontWeight: "600",
-              fontSize: "16px",
-              transition: "background-color 0.3s ease",
-              marginTop: "1rem",
-            }}
-            onMouseEnter={(e) =>
-              !loading && (e.target.style.backgroundColor = "#1d4ed8")
-            }
-            onMouseLeave={(e) =>
-              !loading && (e.target.style.backgroundColor = "#16a34a")
-            }
-          >
+        {/* Submit button */}
+        <div style={{ textAlign: "center" }}>
+          <button className="submit-btn" type="submit" disabled={loading}>
             {loading ? "Submitting..." : "Submit"}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

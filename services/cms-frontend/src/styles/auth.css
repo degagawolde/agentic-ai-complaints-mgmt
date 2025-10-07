@@ -1,0 +1,77 @@
+/* Center the card */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #74ebd5 0%, #acb6e5 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card styling */
+.card {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 350px;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* Card title */
+.card h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Input styling */
+.card input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  margin: 0.6rem 0;
+  border-radius: 0.5rem;
+  border: 1.8px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.card input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+  outline: none;
+}
+
+/* Button styling */
+.card button {
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 1rem;
+  border: 2px solid #4CAF50;
+  background: #4CAF50;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.card button:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Link styling */
+.card a {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
