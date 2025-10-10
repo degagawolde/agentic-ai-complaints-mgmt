@@ -8,9 +8,13 @@ class ComplaintStatus(models.TextChoices):
     IN_PROGRESS = "IN_PROGRESS", "In Progress"
     RESOLVED = "RESOLVED", "Resolved"
     REJECTED = "REJECTED", "Rejected"
-    DRAFT = "draft", "Draft"
+
+class ResolutionStatus(models.TextChoices):
+    DRAFTED = "drafted", "Drafted"
     VALIDATED = "validated", "Validated"
     DELIVERED = "delivered", "Delivered"
+    REJECTED = "REJECTED", "Rejected"
+
 
 class ChannelChoices(models.TextChoices):
     EMAIL = "email", "Email"
@@ -82,10 +86,13 @@ class Resolution(models.Model):
         Complaint, on_delete=models.CASCADE, related_name="resolutions"
     )
     resolution_text = models.TextField()
-    resolved_by = models.CharField(max_length=100)  # AI, Department, Hybrid
+    resolved_by = models.CharField(max_length=100, null=True)  # AI, Department, Hybrid
     validated_by_ai = models.BooleanField(default=False)
+    resolved_by_ai = models.BooleanField(default=False)
     solution_status = models.CharField(
-        max_length=20, choices=ComplaintStatus.choices, default=ComplaintStatus.RECEIVED
+        max_length=20,
+        choices=ComplaintStatus.choices,
+        default=ResolutionStatus.DRAFTED,
     )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
